@@ -1,0 +1,10 @@
+import { build } from "esbuild";
+import { mkdir, copyFile } from "node:fs/promises";
+await mkdir("public/chemistry", { recursive: true });
+for (const file of ["RDKit_minimal.js", "RDKit_minimal.wasm"]) await copyFile(`node_modules/@rdkit/rdkit/dist/${file}`, `public/chemistry/${file}`);
+await copyFile("node_modules/openchemlib/dist/resources.json", "public/chemistry/ocl-resources.json");
+await copyFile("node_modules/3dmol/build/3Dmol-min.js", "public/chemistry/3Dmol-min.js");
+await copyFile("THIRD_PARTY_NOTICES.md", "public/chemistry/THIRD_PARTY_NOTICES.md");
+await build({ entryPoints: ["workers/chemistry.worker.ts"], outfile: "public/chemistry/worker.js", bundle: true, format: "iife", platform: "browser", target: "es2022", minify: true, legalComments: "eof" });
+console.log("Chemistry worker and locally served library assets prepared.");
+await import("./package-source.mjs");
