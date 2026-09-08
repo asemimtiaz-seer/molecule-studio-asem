@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=22.13.0"
+    "node": "24.x"
   },
   "scripts": {
     "install:ci": "bash scripts/install-ci.sh",
@@ -19,7 +19,9 @@
     "typecheck": "tsc --noEmit",
     "source:zip": "node scripts/package-source.mjs",
     "dev:local": "node scripts/start-local.mjs",
-    "predev:local": "node scripts/prepare-chemistry.mjs"
+    "predev:local": "node scripts/prepare-chemistry.mjs",
+    "build:vercel": "node scripts/prepare-chemistry.mjs && next build --webpack",
+    "start:vercel": "next start"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
@@ -71,5 +73,14 @@
     "esbuild": "0.28.0",
     "fflate": "0.7.4"
   },
-  "type": "module"
+  "type": "module",
+  "allowScripts": {
+    "esbuild@0.18.20": true,
+    "esbuild@0.25.12": true,
+    "esbuild@0.27.3": true,
+    "esbuild@0.28.0": true,
+    "sharp@0.34.5": true,
+    "unrs-resolver@1.11.1": true,
+    "workerd@1.20260515.1": true
+  }
 }
