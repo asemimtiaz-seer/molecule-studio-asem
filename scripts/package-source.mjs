@@ -9,6 +9,6 @@ async function walk(dir) { for (const item of await readdir(dir, { withFileTypes
 for (const dir of paths) await walk(dir);
 for (const file of flat) await addFile(file);
 files["molecule-studio/.openai/hosting.json"] = new TextEncoder().encode('{"d1":null,"r2":null}\n');
-files["molecule-studio/.gitignore"] = new Uint8Array(await readFile(".gitignore"));
+await addFile(".gitignore");
 await writeFile("public/molecule-studio-source.zip", zipSync(files, { level: 6 }));
 console.log(`Packaged ${Object.keys(files).length} source files without site credentials, runtime state, or dependencies.`);
