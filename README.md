@@ -4,7 +4,7 @@ A browser-based molecular workspace for drawing and SMILES input, validated 2D s
 
 ## Run it locally
 
-Install **Node.js 22.13 or newer** (Node 24 LTS recommended). Extract the source ZIP, open a terminal in the `molecule-studio` directory, and run:
+Install **Node.js 24 LTS** (the project pins `24.x` to prevent automatic major-version upgrades). Extract the source ZIP, open a terminal in the `molecule-studio` directory, and run:
 
 ```bash
 npm ci
@@ -27,6 +27,27 @@ npm run build
 The hosted production build uses the Sites/Vinext starter's verified Bash build wrapper. On Windows, use WSL for this wrapper. A portable direct build is `node scripts/prepare-chemistry.mjs` followed by `npx vinext build`.
 
 `predev`, `predev:local`, and `prebuild` prepare locally served WASM/JS assets, compile the chemistry worker, and create the source download. Do not open an HTML file directly using `file://`; WASM, workers, and modules need an HTTP server.
+
+## Deploy to Vercel
+
+1. Extract this archive and commit the contents of `molecule-studio` to your Git repository, including `vercel.json`, `package.json`, and `package-lock.json`.
+2. Import that repository in Vercel. Set the Root Directory to the folder containing `package.json` (`.` if you committed its contents at the repository root).
+3. The included `vercel.json` sets the Next.js framework, `npm ci` install command, `npm run build:vercel` build command, and `.next` output directory. Node.js is pinned to `24.x` in `package.json`.
+4. Redeploy after pushing the updated files. Remove any stale dashboard command overrides that conflict with these values. No chemistry API keys are needed.
+
+The Vercel build explicitly prepares the chemistry worker, WASM, viewer assets, and downloadable source, then runs native `next build --webpack`. It does not invoke the Cloudflare/Vinext wrapper. The original `npm run build` command remains the Sites/Cloudflare build; do not select it as the Vercel build command.
+
+To reproduce the Vercel application build locally:
+
+```bash
+npm ci
+npm run build:vercel
+npm run start:vercel
+```
+
+The install policy approves only the locked versions of esbuild, sharp, unrs-resolver, and workerd that need native setup. Review and update these version-specific entries when upgrading dependencies. The deprecated `@esbuild-kit` packages are transitive dependencies of the retained Drizzle development tooling; their warnings do not stop deployment. Do not install `tsx` merely to hide them.
+
+If deployment still fails, inspect the first actual error after the warnings and the final build exit status. Warning-only log excerpts cannot identify every possible deployment failure.
 
 ## Stack and library choices
 
